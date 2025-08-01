@@ -4,6 +4,7 @@ import speech_recognition as sr
 from dotenv import load_dotenv
 import os
 import re
+from pydantic import BaseModel
 
 # Load environment variables
 load_dotenv()
@@ -25,6 +26,10 @@ llm = init_chat_model(
     model_provider="google_genai",
     google_api_key=os.getenv("GOOGLE_API_KEY")
 )
+
+class Todo(BaseModel):
+    title : str
+    description : str
 
 # Tools
 @tool
@@ -65,8 +70,37 @@ def openVSCodeAppTool():
     import os
     os.system("code")
 
+@tool
+def pathDataToolApp():
+    """This tool helps to get the path from the laptop"""
+    import os
+    os.system("cd")
+
+    return pathDataToolApp
+
+@tool
+def todo(title:str,description:str):
+    """This tool helps to create todo"""
+    file = open("data.txt","a")
+
+    
+    file.write(f"Title {title}\n Description {description}")
+
+@tool
+def getTodos():
+    """This tool helps to get all the todos"""
+
+
+    file = open("data.txt","r")
+    value = file.read()
+
+    if(value):
+        speak(value)
+    else:
+        speak("No data")
+
 # Bind tools to the model
-llm = llm.bind_tools([chromeApplication, firefox,dateTimeToolApp,openVSCodeAppTool])
+llm = llm.bind_tools([chromeApplication, firefox,dateTimeToolApp,openVSCodeAppTool,pathDataToolApp,todo,getTodos])
 
 # Initialize speech recognizer
 r = sr.Recognizer()
@@ -114,6 +148,15 @@ while True:
                 
             elif tool_name == "openVSCodeAppTool":
                 openVSCodeAppTool.invoke(tool_args)
+
+            elif tool_name == "pathDataToolApp":
+                pathDataToolApp.invoke(tool_args)
+
+            elif tool_name == "todo":
+                todo.invoke(tool_args)
+
+            elif tool_name == "getTodos":
+                getTodos.invoke(tool_args)
 
         # Speak the model's response
         if data.content:
