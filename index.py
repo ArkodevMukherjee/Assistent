@@ -26,7 +26,7 @@ llm = init_chat_model(
     google_api_key=os.getenv("GOOGLE_API_KEY")
 )
 
-# Tool to open Google Chrome
+# Tools
 @tool
 def chromeApplication():
     """
@@ -36,7 +36,6 @@ def chromeApplication():
     open("chrome", match_closest=True)
     return "Google Chrome opened from the laptop."
 
-# Tool to open Firefox
 @tool
 def firefox():
     """
