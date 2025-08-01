@@ -45,8 +45,28 @@ def firefox():
     open("firefox", match_closest=True)
     return "Firefox opened from the laptop."
 
+@tool
+def dateTimeToolApp():
+    """This tool helps to find out date and time for the user"""
+
+    import datetime
+
+    dateT = datetime.datetime.now()
+
+    speak(f"Today week is {dateT.strftime("%A")}")
+    speak(f"{dateT.strftime("%Y")}")
+    speak(f"{dateT.strftime("%B")}")
+    speak(f"Time is {dateT.strftime("%H")}")
+    speak(f"{dateT.strftime("%M")}")
+
+@tool
+def openVSCodeAppTool():
+    """This tool helps to open code editor from the laptop"""
+    import os
+    os.system("code")
+
 # Bind tools to the model
-llm = llm.bind_tools([chromeApplication, firefox])
+llm = llm.bind_tools([chromeApplication, firefox,dateTimeToolApp,openVSCodeAppTool])
 
 # Initialize speech recognizer
 r = sr.Recognizer()
@@ -85,8 +105,15 @@ while True:
 
             if tool_name == "chromeApplication":
                 chromeApplication.invoke(tool_args)
+                
             elif tool_name == "firefox":
                 firefox.invoke(tool_args)
+
+            elif tool_name == "dateTimeToolApp":
+                dateTimeToolApp.invoke(tool_args)
+                
+            elif tool_name == "openVSCodeAppTool":
+                openVSCodeAppTool.invoke(tool_args)
 
         # Speak the model's response
         if data.content:
